@@ -1,4 +1,4 @@
-package kasirtoko.view;
+package org.example.kasirtoko.view;
 
 import javax.swing.*;
 import java.awt.*;
