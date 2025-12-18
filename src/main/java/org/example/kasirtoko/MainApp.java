@@ -1,10 +1,10 @@
-package org.example;
+package org.example.kasirtoko;
 
 /**
  * Hello world!
  *
  */
-public class App 
+public class MainApp
 {
     public static void main( String[] args )
     {
