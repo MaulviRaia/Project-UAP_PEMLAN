@@ -1,4 +1,4 @@
-package org.example;
+package org.kasirtoko;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
