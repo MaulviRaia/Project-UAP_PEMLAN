@@ -39,14 +39,14 @@ public class Transaksi implements Serializable {
     }
 
     public String struk() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("STRUK BELANJA\n");
-        sb.append(LocalDateTime.now()
+        StringBuilder s = new StringBuilder();
+        s.append("STRUK BELANJA\n");
+        s.append(LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-        sb.append("\n\n");
+        s.append("\n\n");
 
         for (ItemTransaksi it : items) {
-            sb.append(it.produk.nama)
+            s.append(it.produk.nama)
                     .append(" x")
                     .append(it.qty)
                     .append(" = ")
@@ -54,15 +54,15 @@ public class Transaksi implements Serializable {
                     .append("\n");
         }
 
-        sb.append("\nTOTAL : ").append(total());
-        return sb.toString();
+        s.append("\nTOTAL : ").append(total());
+        return s.toString();
     }
 
     public void simpanStruk() {
         try (FileWriter fw = new FileWriter("struk.txt", true)) {
             fw.write(struk());
-            fw.write("\n----------------------\n");
-        } catch (IOException e) {
+            fw.write("\n-----------------\n");
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -76,7 +76,7 @@ public class Transaksi implements Serializable {
         try (ObjectOutputStream oos =
                      new ObjectOutputStream(new FileOutputStream(file))) {
             oos.writeObject(items);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
