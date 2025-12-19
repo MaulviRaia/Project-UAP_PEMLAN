@@ -5,38 +5,45 @@ import java.awt.*;
 
 public class UIStyle {
 
-    // ===== COLOR =====
-    public static final Color BG_MAIN = Color.WHITE;
-    public static final Color PRIMARY = new Color(33, 150, 243);     // biru
-    public static final Color DANGER = new Color(229, 57, 53);       // merah
-    public static final Color SECONDARY = new Color(120, 144, 156);  // abu
-    public static final Color TEXT_DARK = new Color(40, 40, 40);
+    // 🎨 WARNA
+    public static final Color PRIMARY = new Color(52,152,219);   // biru utama
+    public static final Color SECONDARY = new Color(189,195,199);
+    public static final Color DANGER = new Color(231,76,60);
 
-    // ===== FONT =====
-    public static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 22);
-    public static final Font NORMAL_FONT = new Font("Segoe UI", Font.PLAIN, 14);
+    public static final Color BG_MAIN = new Color(245,246,250);
+    public static final Color TEXT_DARK = new Color(33,33,33);
 
-    // ===== BUTTON STYLE =====
+    // 🔤 FONT
+    public static final Font TITLE_FONT =
+            new Font("Segoe UI", Font.BOLD, 22);
+
+    public static final Font BODY_FONT =
+            new Font("Segoe UI", Font.PLAIN, 14);
+
+    // 🔘 BUTTON
     public static JButton primaryButton(String text) {
-        return styledButton(text, PRIMARY);
-    }
-
-    public static JButton dangerButton(String text) {
-        return styledButton(text, DANGER);
+        JButton b = new JButton(text);
+        b.setBackground(PRIMARY);
+        b.setForeground(Color.WHITE);
+        b.setFont(BODY_FONT);
+        b.setFocusPainted(false);
+        return b;
     }
 
     public static JButton secondaryButton(String text) {
-        return styledButton(text, SECONDARY);
+        JButton b = new JButton(text);
+        b.setBackground(SECONDARY);
+        b.setFont(BODY_FONT);
+        b.setFocusPainted(false);
+        return b;
     }
 
-    private static JButton styledButton(String text, Color bg) {
-        JButton btn = new JButton(text);
-        btn.setBackground(bg);
-        btn.setForeground(Color.WHITE);
-        btn.setFont(NORMAL_FONT);
-        btn.setFocusPainted(false);
-        btn.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
-        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        return btn;
+    public static JButton dangerButton(String text) {
+        JButton b = new JButton(text);
+        b.setBackground(DANGER);
+        b.setForeground(Color.WHITE);
+        b.setFont(BODY_FONT);
+        b.setFocusPainted(false);
+        return b;
     }
 }

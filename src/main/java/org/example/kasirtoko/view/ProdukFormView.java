@@ -9,36 +9,56 @@ public class ProdukFormView extends JPanel {
 
     public ProdukFormView(CardLayout card, JPanel container, ProdukManager pm) {
 
-        setLayout(new BorderLayout(10,10));
+        setLayout(new GridBagLayout());
         setBackground(UIStyle.BG_MAIN);
-        setBorder(BorderFactory.createEmptyBorder(30,200,30,200));
 
-        JLabel title = new JLabel("Tambah Produk", SwingConstants.CENTER);
+        // ===== CARD FORM =====
+        JPanel cardForm = new JPanel();
+        cardForm.setPreferredSize(new Dimension(420, 380));
+        cardForm.setBackground(Color.WHITE);
+        cardForm.setLayout(new BorderLayout(16,16));
+        cardForm.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220,220,220)),
+                BorderFactory.createEmptyBorder(20,24,20,24)
+        ));
+
+        // ===== TITLE =====
+        JLabel title = new JLabel("Tambah Produk");
         title.setFont(UIStyle.TITLE_FONT);
-        title.setForeground(UIStyle.TEXT_DARK);
+        title.setForeground(UIStyle.PRIMARY);
+
+        // ===== FORM =====
+        JPanel form = new JPanel(new GridLayout(8,1,8,8));
+        form.setBackground(Color.WHITE);
 
         JTextField tfNama = new JTextField();
         JTextField tfHarga = new JTextField();
         JTextField tfStok = new JTextField();
-        JComboBox<Kategori> cbKategori =
-                new JComboBox<>(Kategori.values());
+        JComboBox<Kategori> cbKategori = new JComboBox<>(Kategori.values());
 
-        JPanel form = new JPanel(new GridLayout(4,2,12,12));
-        form.setBackground(UIStyle.BG_MAIN);
-
-        form.add(new JLabel("Nama Produk"));
+        form.add(label("Nama Produk"));
         form.add(tfNama);
-        form.add(new JLabel("Harga"));
+
+        form.add(label("Harga"));
         form.add(tfHarga);
-        form.add(new JLabel("Stok"));
+
+        form.add(label("Stok"));
         form.add(tfStok);
-        form.add(new JLabel("Kategori"));
+
+        form.add(label("Kategori"));
         form.add(cbKategori);
 
-        JButton simpan = UIStyle.primaryButton("Simpan");
-        JButton back = UIStyle.secondaryButton("Kembali");
+        // ===== BUTTON =====
+        JButton btnSimpan = UIStyle.primaryButton("Simpan");
+        JButton btnBack   = UIStyle.secondaryButton("Batal");
 
-        simpan.addActionListener(e -> {
+        JPanel action = new JPanel(new FlowLayout(FlowLayout.RIGHT,10,0));
+        action.setBackground(Color.WHITE);
+        action.add(btnBack);
+        action.add(btnSimpan);
+
+        // ===== ACTION =====
+        btnSimpan.addActionListener(e -> {
             try {
                 Produk p = new Produk(
                         tfNama.getText(),
@@ -48,23 +68,25 @@ public class ProdukFormView extends JPanel {
                 );
                 pm.tambah(p);
                 JOptionPane.showMessageDialog(this,"Produk berhasil ditambahkan");
-                tfNama.setText("");
-                tfHarga.setText("");
-                tfStok.setText("");
+                card.show(container,"produk");
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this,"Input tidak valid");
             }
         });
 
-        back.addActionListener(e -> card.show(container,"produk"));
+        btnBack.addActionListener(e -> card.show(container,"produk"));
 
-        JPanel bottom = new JPanel();
-        bottom.setBackground(UIStyle.BG_MAIN);
-        bottom.add(back);
-        bottom.add(simpan);
+        // ===== ASSEMBLE =====
+        cardForm.add(title, BorderLayout.NORTH);
+        cardForm.add(form, BorderLayout.CENTER);
+        cardForm.add(action, BorderLayout.SOUTH);
 
-        add(title,BorderLayout.NORTH);
-        add(form,BorderLayout.CENTER);
-        add(bottom,BorderLayout.SOUTH);
+        add(cardForm);
+    }
+
+    private JLabel label(String text) {
+        JLabel l = new JLabel(text);
+        l.setFont(UIStyle.BODY_FONT);
+        return l;
     }
 }

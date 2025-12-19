@@ -2,7 +2,6 @@ package org.example.kasirtoko.view;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
 import org.example.kasirtoko.model.*;
@@ -30,8 +29,6 @@ public class KasirView extends JPanel {
 
         JTable tblProduk = new JTable(modelProduk);
         tblProduk.setRowHeight(26);
-        tblProduk.setSelectionBackground(UIStyle.PRIMARY);
-        tblProduk.setSelectionForeground(Color.WHITE);
 
         for (Produk p : pm.getAll()) {
             modelProduk.addRow(new Object[]{
@@ -51,26 +48,24 @@ public class KasirView extends JPanel {
 
         JTable tblKeranjang = new JTable(modelKeranjang);
         tblKeranjang.setRowHeight(26);
-        tblKeranjang.setSelectionBackground(UIStyle.PRIMARY);
-        tblKeranjang.setSelectionForeground(Color.WHITE);
 
         // ================= TOTAL =================
         JLabel lblTotal = new JLabel("Total : Rp 0");
         lblTotal.setFont(UIStyle.TITLE_FONT);
-        lblTotal.setForeground(UIStyle.PRIMARY);
 
         JTextField tfBayar = new JTextField();
+
         JLabel lblKembali = new JLabel("Kembalian : Rp 0");
-        lblKembali.setFont(UIStyle.NORMAL_FONT);
+        lblKembali.setFont(UIStyle.BODY_FONT);
 
         Transaksi transaksi = new Transaksi();
 
         // ================= BUTTON =================
         JButton btnTambah = UIStyle.primaryButton("Tambah");
-        JButton btnBayar = UIStyle.primaryButton("Bayar");
-        JButton btnBack = UIStyle.secondaryButton("Dashboard");
+        JButton btnBayar   = UIStyle.primaryButton("Bayar");
+        JButton btnBack    = UIStyle.secondaryButton("Dashboard");
 
-        btnBayar.setEnabled(false); // UX AMAN
+        btnBayar.setEnabled(false);
 
         // ================= ACTION: TAMBAH =================
         btnTambah.addActionListener(e -> {
@@ -119,7 +114,7 @@ public class KasirView extends JPanel {
 
                 JOptionPane.showMessageDialog(
                         this,
-                        "Pembayaran Berhasil\nKembalian : " + FormatterUtil.rupiah(kembali),
+                        "Pembayaran berhasil\nKembalian : " + FormatterUtil.rupiah(kembali),
                         "Sukses",
                         JOptionPane.INFORMATION_MESSAGE
                 );
