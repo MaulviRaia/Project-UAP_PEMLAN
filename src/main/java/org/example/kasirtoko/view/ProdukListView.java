@@ -1,48 +1,51 @@
 package org.example.kasirtoko.view;
 
 import javax.swing.*;
-import javax.swing.table.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-
-import org.example.kasirtoko.model.Produk;
-import org.example.kasirtoko.service.ProdukManager;
+import org.example.kasirtoko.service.*;
 
 public class ProdukListView extends JPanel {
 
-    DefaultTableModel model =
-            new DefaultTableModel(new String[]{"Nama","Harga"},0);
-    JTable table = new JTable(model);
+    DefaultTableModel model = new DefaultTableModel(
+            new String[]{"Nama","Harga","Stok","Kategori"},0);
 
-    public ProdukListView(CardLayout card, JPanel container, ProdukManager m) {
-        setLayout(new BorderLayout());
+    public ProdukListView(CardLayout card, JPanel container, ProdukManager pm) {
 
-        refresh(m);
+        setLayout(new BorderLayout(10,10));
+        JTable table = new JTable(model);
+        refresh(pm);
 
+        JButton tambah = new JButton("Tambah");
         JButton hapus = new JButton("Hapus");
-        JButton back = new JButton("← Dashboard");
+        JButton back = new JButton("Dashboard");
 
+        tambah.addActionListener(e -> card.show(container,"produk_form"));
         hapus.addActionListener(e -> {
             int i = table.getSelectedRow();
             if (i >= 0) {
-                m.hapus(i);
-                refresh(m);
+                pm.hapus(i);
+                refresh(pm);
             }
         });
-
         back.addActionListener(e -> card.show(container,"dashboard"));
 
         JPanel bottom = new JPanel();
         bottom.add(back);
+        bottom.add(tambah);
         bottom.add(hapus);
 
-        add(new JScrollPane(table), BorderLayout.CENTER);
-        add(bottom, BorderLayout.SOUTH);
+        add(new JScrollPane(table),BorderLayout.CENTER);
+        add(bottom,BorderLayout.SOUTH);
     }
 
-    private void refresh(ProdukManager m) {
+    private void refresh(ProdukManager pm) {
         model.setRowCount(0);
-        for (Produk p : m.getAll()) {
-            model.addRow(new Object[]{p.nama, p.harga});
-        }
+        pm.getAll().forEach(p ->
+                model.addRow(new Object[]{
+                        p.getNama(), p.getHarga(),
+                        p.getStok(), p.getKategori()
+                })
+        );
     }
 }

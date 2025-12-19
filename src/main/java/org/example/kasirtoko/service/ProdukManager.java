@@ -1,21 +1,21 @@
 package org.example.kasirtoko.service;
 
-import java.util.*;
+import org.example.kasirtoko.model.*;
 import java.io.*;
-
-import org.example.kasirtoko.model.Produk;
+import java.util.*;
 
 public class ProdukManager {
 
-    private ArrayList<Produk> list = new ArrayList<>();
-    private File file = new File("produk.csv");
+    private final List<Produk> list = new ArrayList<>();
+    private final File file =
+            new File("src/main/java/org/example/kasirtoko/data/produk.csv");
 
     public ProdukManager() {
         load();
     }
 
-    public void tambah(String nama, double harga) {
-        list.add(new Produk(nama, harga));
+    public void tambah(Produk p) {
+        list.add(p);
         save();
     }
 
@@ -24,7 +24,7 @@ public class ProdukManager {
         save();
     }
 
-    public ArrayList<Produk> getAll() {
+    public List<Produk> getAll() {
         return list;
     }
 
@@ -32,13 +32,17 @@ public class ProdukManager {
         return list.get(index);
     }
 
+    public void kurangiStok(Produk p, int qty) {
+        p.kurangiStok(qty);
+        save();
+    }
+
     private void load() {
         if (!file.exists()) return;
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String s;
             while ((s = br.readLine()) != null) {
-                String[] d = s.split(",");
-                list.add(new Produk(d[0], Double.parseDouble(d[1])));
+                list.add(Produk.fromCSV(s));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -48,7 +52,7 @@ public class ProdukManager {
     private void save() {
         try (PrintWriter pw = new PrintWriter(file)) {
             for (Produk p : list) {
-                pw.println(p.nama + "," + p.harga);
+                pw.println(p.toCSV());
             }
         } catch (Exception e) {
             e.printStackTrace();

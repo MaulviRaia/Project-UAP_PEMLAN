@@ -1,93 +1,48 @@
 package org.example.kasirtoko.model;
 
-import java.util.*;
-import java.io.*;
-import java.time.*;
-import java.time.format.DateTimeFormatter;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Transaksi implements Serializable {
-
-    private ArrayList<ItemTransaksi> items = new ArrayList<>();
-    private final File file = new File("keranjang.dat");
+    private LocalDateTime tanggal;
+    private List<ItemTransaksi> items = new ArrayList<>();
+    private double total;
 
     public Transaksi() {
-        load();
+        tanggal = LocalDateTime.now();
     }
 
-    public void tambah(Produk p) {
-        for (ItemTransaksi it : items) {
-            if (it.produk.nama.equals(p.nama)) {
-                it.qty++;
-                save();
-                return;
-            }
-        }
-        items.add(new ItemTransaksi(p));
-        save();
+    public void tambahItem(ItemTransaksi item) {
+        items.add(item);
+        total += item.getSubtotal();
     }
 
-    public ArrayList<ItemTransaksi> getItems() {
+    public List<ItemTransaksi> getItems() {
         return items;
     }
 
-    public double total() {
-        double total = 0;
-        for (ItemTransaksi it : items) {
-            total += it.subtotal();
-        }
+    public double getTotal() {
         return total;
     }
 
-    public String struk() {
-        StringBuilder s = new StringBuilder();
-        s.append("STRUK BELANJA\n");
-        s.append(LocalDateTime.now()
-                .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-        s.append("\n\n");
-
-        for (ItemTransaksi it : items) {
-            s.append(it.produk.nama)
-                    .append(" x")
-                    .append(it.qty)
-                    .append(" = ")
-                    .append(it.subtotal())
-                    .append("\n");
-        }
-
-        s.append("\nTOTAL : ").append(total());
-        return s.toString();
+    public LocalDateTime getTanggal() {
+        return tanggal;
+    }
+    public String toCSV() {
+        return tanggal + "," + total;
     }
 
-    public void simpanStruk() {
-        try (FileWriter fw = new FileWriter("struk.txt", true)) {
-            fw.write(struk());
-            fw.write("\n-----------------\n");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static Transaksi fromCSV(String line) {
+        String[] d = line.split(",");
+        Transaksi t = new Transaksi();
+        t.tanggal = java.time.LocalDateTime.parse(d[0]);
+        t.total = Double.parseDouble(d[1]);
+        return t;
     }
-
-    public void reset() {
+    public void clear() {
         items.clear();
-        save();
     }
 
-    private void save() {
-        try (ObjectOutputStream oos =
-                     new ObjectOutputStream(new FileOutputStream(file))) {
-            oos.writeObject(items);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void load() {
-        if (!file.exists()) return;
-        try (ObjectInputStream ois =
-                     new ObjectInputStream(new FileInputStream(file))) {
-            items = (ArrayList<ItemTransaksi>) ois.readObject();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

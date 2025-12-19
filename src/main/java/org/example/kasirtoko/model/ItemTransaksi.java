@@ -3,15 +3,23 @@ package org.example.kasirtoko.model;
 import java.io.Serializable;
 
 public class ItemTransaksi implements Serializable {
-    public Produk produk;
-    public int qty;
+    private final Produk produk;
+    private final int qty;
 
-    public ItemTransaksi(Produk produk) {
+    public ItemTransaksi(Produk produk, int qty) {
         this.produk = produk;
-        this.qty = 1;
+        this.qty = qty;
     }
 
-    public double subtotal() {
-        return produk.harga * qty;
+    public Produk getProduk() {
+        return produk;
+    }
+
+    public int getQty() {
+        return qty;
+    }
+
+    public double getSubtotal() {
+        return produk.getHarga() * qty;
     }
 }
