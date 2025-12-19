@@ -6,7 +6,7 @@ import org.example.kasirtoko.view.*;
 import org.example.kasirtoko.service.*;
 
 public class MainApp extends JFrame {
-
+//
     CardLayout cardLayout = new CardLayout();
     JPanel container = new JPanel(cardLayout);
 
