@@ -10,10 +10,12 @@ public class ProdukFormView extends JPanel {
     public ProdukFormView(CardLayout card, JPanel container, ProdukManager pm) {
 
         setLayout(new BorderLayout(10,10));
+        setBackground(UIStyle.BG_MAIN);
         setBorder(BorderFactory.createEmptyBorder(30,200,30,200));
 
         JLabel title = new JLabel("Tambah Produk", SwingConstants.CENTER);
         title.setFont(UIStyle.TITLE_FONT);
+        title.setForeground(UIStyle.TEXT_DARK);
 
         JTextField tfNama = new JTextField();
         JTextField tfHarga = new JTextField();
@@ -21,7 +23,9 @@ public class ProdukFormView extends JPanel {
         JComboBox<Kategori> cbKategori =
                 new JComboBox<>(Kategori.values());
 
-        JPanel form = new JPanel(new GridLayout(4,2,10,10));
+        JPanel form = new JPanel(new GridLayout(4,2,12,12));
+        form.setBackground(UIStyle.BG_MAIN);
+
         form.add(new JLabel("Nama Produk"));
         form.add(tfNama);
         form.add(new JLabel("Harga"));
@@ -31,8 +35,8 @@ public class ProdukFormView extends JPanel {
         form.add(new JLabel("Kategori"));
         form.add(cbKategori);
 
-        JButton simpan = new JButton("Simpan");
-        JButton back = new JButton("Dashboard");
+        JButton simpan = UIStyle.primaryButton("Simpan");
+        JButton back = UIStyle.secondaryButton("Kembali");
 
         simpan.addActionListener(e -> {
             try {
@@ -52,9 +56,10 @@ public class ProdukFormView extends JPanel {
             }
         });
 
-        back.addActionListener(e -> card.show(container,"dashboard"));
+        back.addActionListener(e -> card.show(container,"produk"));
 
         JPanel bottom = new JPanel();
+        bottom.setBackground(UIStyle.BG_MAIN);
         bottom.add(back);
         bottom.add(simpan);
 
