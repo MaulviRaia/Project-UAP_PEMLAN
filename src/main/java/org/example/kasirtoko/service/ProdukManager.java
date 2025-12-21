@@ -24,6 +24,12 @@ public class ProdukManager {
         save();
     }
 
+    // ===== EDIT PRODUK =====
+    public void edit(int index, String nama, double harga, int stok, Kategori kategori) {
+        list.set(index, new Produk(nama, harga, stok, kategori));
+        save();
+    }
+
     public List<Produk> getAll() {
         return list;
     }
