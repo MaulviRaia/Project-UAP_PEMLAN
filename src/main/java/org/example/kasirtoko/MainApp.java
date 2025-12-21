@@ -13,7 +13,7 @@ public class MainApp extends JFrame {
     ProdukManager produkManager = new ProdukManager();
     TransaksiManager transaksiManager = new TransaksiManager();
 
-    // ===== COLOR THEME (IMPROVED) =====
+    // ===== COLOR THEME =====
     Color sidebarBg = new Color(22, 24, 28);
     Color sidebarLine = new Color(45, 48, 55);
     Color mainBg = new Color(245, 246, 250);
@@ -26,7 +26,7 @@ public class MainApp extends JFrame {
     Font fontFooter = new Font("Segoe UI", Font.PLAIN, 12);
 
     public MainApp() {
-        setTitle("SistemManajemen | Kasir Toko");
+        setTitle("Sistem Manajemen | Kasir Toko");
         setSize(1200, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -37,17 +37,14 @@ public class MainApp extends JFrame {
         sidePanel.setPreferredSize(new Dimension(230, 0));
         sidePanel.setBackground(sidebarBg);
 
-        // ===== TITLE =====
         JLabel title = new JLabel("Page Menu", SwingConstants.CENTER);
         title.setForeground(Color.WHITE);
         title.setFont(fontTitle);
-        title.setBorder(BorderFactory.createEmptyBorder(25, 0, 20, 0));
+        title.setBorder(BorderFactory.createEmptyBorder(25, 0, 15, 0));
 
-        // ===== SEPARATOR =====
         JSeparator separator = new JSeparator();
         separator.setForeground(sidebarLine);
 
-        // ===== MENU =====
         JPanel menuPanel = new JPanel(new GridLayout(6, 1, 0, 12));
         menuPanel.setBackground(sidebarBg);
         menuPanel.setBorder(BorderFactory.createEmptyBorder(20, 15, 20, 15));
@@ -64,25 +61,44 @@ public class MainApp extends JFrame {
         menuPanel.add(btnRiwayat);
         menuPanel.add(btnExit);
 
-        // ===== FOOTER / COPYRIGHT =====
-        JLabel footer = new JLabel("© 2025 TokoSumberTerang ", SwingConstants.CENTER);
+        JLabel footer = new JLabel("© 2025 TokoSumberTerang", SwingConstants.CENTER);
         footer.setForeground(new Color(160, 160, 160));
         footer.setFont(fontFooter);
         footer.setBorder(BorderFactory.createEmptyBorder(10, 5, 15, 5));
 
-        sidePanel.add(title, BorderLayout.NORTH);
-        sidePanel.add(separator, BorderLayout.CENTER);
+        // ==== sidebar layout fix ====
+        JPanel topSide = new JPanel(new BorderLayout());
+        topSide.setBackground(sidebarBg);
+        topSide.add(title, BorderLayout.NORTH);
+        topSide.add(separator, BorderLayout.SOUTH);
+
+        sidePanel.add(topSide, BorderLayout.NORTH);
         sidePanel.add(menuPanel, BorderLayout.CENTER);
         sidePanel.add(footer, BorderLayout.SOUTH);
 
         // ================= CONTENT =================
         container.setBackground(mainBg);
 
-        container.add(new DashboardView(cardLayout, container), "dashboard");
-        container.add(new ProdukListView(cardLayout, container, produkManager), "produk");
-        container.add(new ProdukFormView(cardLayout, container, produkManager), "produk_form");
-        container.add(new KasirView(cardLayout, container, produkManager, transaksiManager), "kasir");
-        container.add(new RiwayatTransaksiView(cardLayout, container, transaksiManager), "riwayat");
+        container.add(
+                new DashboardView(cardLayout, container, produkManager, transaksiManager),
+                "dashboard"
+        );
+        container.add(
+                new ProdukListView(cardLayout, container, produkManager),
+                "produk"
+        );
+        container.add(
+                new ProdukFormView(cardLayout, container, produkManager),
+                "produk_form"
+        );
+        container.add(
+                new KasirView(cardLayout, container, produkManager, transaksiManager),
+                "kasir"
+        );
+        container.add(
+                new RiwayatTransaksiView(cardLayout, container, transaksiManager),
+                "riwayat"
+        );
 
         // ================= ACTION =================
         btnDashboard.addActionListener(e -> cardLayout.show(container, "dashboard"));
@@ -108,7 +124,6 @@ public class MainApp extends JFrame {
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btn.setHorizontalAlignment(SwingConstants.LEFT);
 
-        // Hover Effect
         btn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btn.setBackground(btnHover);
