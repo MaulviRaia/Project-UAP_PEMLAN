@@ -103,7 +103,6 @@ Class utilitas seperti `FileUtil` dan `FormatterUtil` dapat digunakan kembali di
 +----------------+
 |     Produk     |
 +----------------+
-| - id           |
 | - nama         |
 | - harga        |
 | - stok         |
@@ -229,15 +228,13 @@ in the Software without restriction...
 
 ## Catatan Akademik
 Proyek ini dikembangkan murni untuk keperluan akademik dan pembelajaran.
-
+Yang beranggotakan:
+1. Hamdan Maulana
+NIM : 202410370110223
+2. Maulvinazir Achmad Indraraia
+Nim : 202410370110254
 
 ---
 
-### 🔥 Kenapa README ini **aman buat dosen**:
-✅ Ada **tujuan proyek**  
-✅ Jelasin **konsep OOP**  
-✅ Struktur folder jelas  
-✅ Bahasa formal & akademik  
-✅ Ada kontribusi + lisensi  
-✅ Cocok buat **UAP / UAS / Praktikum**
+
 
