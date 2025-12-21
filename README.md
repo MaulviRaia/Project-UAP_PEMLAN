@@ -107,7 +107,6 @@ Class utilitas seperti `FileUtil` dan `FormatterUtil` dapat digunakan kembali di
 | - harga        |
 | - stok         |
 +----------------+
-| + getId()      |
 | + getNama()    |
 | + getHarga()   |
 | + getStok()    |
