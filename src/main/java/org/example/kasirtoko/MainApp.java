@@ -76,7 +76,7 @@ public class MainApp extends JFrame {
 
         // ===== COPYRIGHT =====
         JLabel copyright = new JLabel(
-                "© 2025 KasirToko App",
+                "© 2025 TokoSumberTerang",
                 SwingConstants.CENTER
         );
         copyright.setForeground(textSoft);

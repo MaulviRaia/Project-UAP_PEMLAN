@@ -73,7 +73,7 @@ public class DashboardView extends JPanel {
         refresh(); // ⬅️ INIT FIRST LOAD
     }
 
-    // ================= REFRESH (INI YANG HILANG) =================
+    // ================= REFRESH =================
     public void refresh() {
         lblTotalProduk.setText(String.valueOf(pm.getAll().size()));
         lblTotalPenjualan.setText(
