@@ -14,7 +14,7 @@ public class ProdukListView extends JPanel {
 
     // ===== THEME =====
     private final Color primary = new Color(33, 150, 243);
-    private final Color bgMain  = Color.WHITE;
+    private final Color danger  = new Color(220, 53, 69);
     private final Color bgSoft  = new Color(245, 247, 250);
     private final Color textDark = new Color(50, 50, 50);
 
@@ -59,9 +59,7 @@ public class ProdukListView extends JPanel {
         model = new DefaultTableModel(
                 new String[]{"Nama Produk","Harga","Stok","Kategori"}, 0
         ) {
-            public boolean isCellEditable(int r, int c) {
-                return false;
-            }
+            public boolean isCellEditable(int r, int c) { return false; }
         };
 
         table = new JTable(model);
@@ -72,7 +70,6 @@ public class ProdukListView extends JPanel {
         table.getTableHeader().setFont(bodyFont);
         table.getTableHeader().setBackground(primary);
         table.getTableHeader().setForeground(Color.WHITE);
-        table.setFillsViewportHeight(true);
 
         sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);
@@ -84,11 +81,11 @@ public class ProdukListView extends JPanel {
 
             private void search() {
                 String text = txtSearch.getText();
-                if (text.trim().isEmpty()) {
-                    sorter.setRowFilter(null);
-                } else {
-                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-                }
+                sorter.setRowFilter(
+                        text.trim().isEmpty()
+                                ? null
+                                : RowFilter.regexFilter("(?i)" + text)
+                );
             }
         });
 
@@ -96,9 +93,10 @@ public class ProdukListView extends JPanel {
         scroll.setBorder(BorderFactory.createLineBorder(new Color(220,220,220)));
 
         // ================= BUTTON =================
-        JButton btnBack = createButton("Dashboard", false);
-        JButton btnRefresh = createButton("Refresh", false);
-        JButton btnTambah = createButton("Tambah Produk", true);
+        JButton btnBack    = createButton("Dashboard", false, primary);
+        JButton btnRefresh = createButton("Refresh", false, primary);
+        JButton btnTambah  = createButton("Tambah Produk", true, primary);
+        JButton btnHapus   = createButton("Hapus Produk", true, danger);
 
         btnBack.addActionListener(e ->
                 card.show(container,"dashboard")
@@ -110,10 +108,41 @@ public class ProdukListView extends JPanel {
                 card.show(container,"produk_form")
         );
 
-        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT,10,0));
+        // ===== ACTION HAPUS =====
+        btnHapus.addActionListener(e -> {
+            int row = table.getSelectedRow();
+            if (row < 0) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Pilih produk yang ingin dihapus!",
+                        "Peringatan",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return;
+            }
+
+            int modelRow = table.convertRowIndexToModel(row);
+            String nama = model.getValueAt(modelRow, 0).toString();
+
+            int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "Yakin hapus produk \"" + nama + "\" ?",
+                    "Konfirmasi",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                pm.hapus(modelRow);
+                refreshData();
+            }
+        });
+
+        // ================= BOTTOM GRID =================
+        JPanel bottom = new JPanel(new GridLayout(1,4,12,0));
         bottom.setBackground(bgSoft);
         bottom.add(btnBack);
         bottom.add(btnRefresh);
+        bottom.add(btnHapus);
         bottom.add(btnTambah);
 
         // ================= ADD =================
@@ -125,22 +154,21 @@ public class ProdukListView extends JPanel {
     }
 
     // ================= BUTTON STYLE =================
-    private JButton createButton(String text, boolean primaryBtn) {
+    private JButton createButton(String text, boolean filled, Color color) {
         JButton btn = new JButton(text);
         btn.setFont(bodyFont);
         btn.setFocusPainted(false);
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn.setBorder(BorderFactory.createEmptyBorder(8,14,8,14));
 
-        if (primaryBtn) {
-            btn.setBackground(primary);
+        if (filled) {
+            btn.setBackground(color);
             btn.setForeground(Color.WHITE);
         } else {
             btn.setBackground(Color.WHITE);
-            btn.setForeground(primary);
-            btn.setBorder(BorderFactory.createLineBorder(primary));
+            btn.setForeground(color);
+            btn.setBorder(BorderFactory.createLineBorder(color));
         }
-
-        btn.setBorder(BorderFactory.createEmptyBorder(8,16,8,16));
         return btn;
     }
 
