@@ -76,7 +76,7 @@ Aplikasi ini dikembangkan dengan menerapkan prinsip **Object-Oriented Programmin
 ### 1. Encapsulation
 Setiap class memiliki atribut dan method yang dibungkus dalam satu kesatuan objek.
 Contoh:
-- Class `Produk` menyimpan data seperti `id`, `nama`, `harga`, dan `stok`
+- Class `Produk` menyimpan data seperti `nama`, `harga`, dan `stok`
 - Akses data dilakukan melalui method (getter dan setter)
 
 ### 2. Abstraction
