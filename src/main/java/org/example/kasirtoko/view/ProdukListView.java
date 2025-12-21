@@ -9,133 +9,142 @@ public class ProdukListView extends JPanel {
 
     private final ProdukManager pm;
     private final DefaultTableModel model;
+    private final JTable table;
     private final TableRowSorter<DefaultTableModel> sorter;
+
+    // ===== THEME =====
+    private final Color primary = new Color(33, 150, 243);
+    private final Color bgMain  = Color.WHITE;
+    private final Color bgSoft  = new Color(245, 247, 250);
+    private final Color textDark = new Color(50, 50, 50);
+
+    private final Font titleFont = new Font("Segoe UI", Font.BOLD, 20);
+    private final Font bodyFont  = new Font("Segoe UI", Font.PLAIN, 13);
 
     public ProdukListView(CardLayout card, JPanel container, ProdukManager pm) {
         this.pm = pm;
 
-        setLayout(new BorderLayout(12,12));
-        setBackground(UIStyle.BG_MAIN);
+        setLayout(new BorderLayout(16,16));
+        setBackground(bgSoft);
         setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
+
+        // ================= TITLE =================
+        JLabel title = new JLabel("Daftar Produk");
+        title.setFont(titleFont);
+        title.setForeground(textDark);
+
+        // ================= SEARCH =================
+        JTextField txtSearch = new JTextField(20);
+        txtSearch.setFont(bodyFont);
+        txtSearch.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(200,200,200)),
+                BorderFactory.createEmptyBorder(6,10,6,10)
+        ));
+
+        JLabel lblSearch = new JLabel("Cari:");
+        lblSearch.setFont(bodyFont);
+
+        JPanel top = new JPanel(new BorderLayout());
+        top.setBackground(bgSoft);
+
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT,8,0));
+        searchPanel.setBackground(bgSoft);
+        searchPanel.add(lblSearch);
+        searchPanel.add(txtSearch);
+
+        top.add(title, BorderLayout.WEST);
+        top.add(searchPanel, BorderLayout.EAST);
 
         // ================= TABLE =================
         model = new DefaultTableModel(
-                new String[]{"Nama","Harga","Stok","Kategori"},0
+                new String[]{"Nama Produk","Harga","Stok","Kategori"}, 0
         ) {
             public boolean isCellEditable(int r, int c) {
                 return false;
             }
         };
 
-        JTable table = new JTable(model);
+        table = new JTable(model);
+        table.setFont(bodyFont);
         table.setRowHeight(26);
-        table.setFont(UIStyle.BODY_FONT);
+        table.setSelectionBackground(primary);
+        table.setSelectionForeground(Color.WHITE);
+        table.getTableHeader().setFont(bodyFont);
+        table.getTableHeader().setBackground(primary);
+        table.getTableHeader().setForeground(Color.WHITE);
+        table.setFillsViewportHeight(true);
 
         sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);
 
-        refreshData();
+        txtSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { search(); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { search(); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { search(); }
 
-        // ================= SEARCH =================
-        JTextField tfSearch = new JTextField();
-        tfSearch.setFont(UIStyle.BODY_FONT);
-        tfSearch.putClientProperty(
-                "JTextField.placeholderText",
-                "Cari nama produk..."
-        );
-
-        JPanel searchBar = createSearchBar(tfSearch);
-
-        tfSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            public void insertUpdate(javax.swing.event.DocumentEvent e) { filter(); }
-            public void removeUpdate(javax.swing.event.DocumentEvent e) { filter(); }
-            public void changedUpdate(javax.swing.event.DocumentEvent e) { filter(); }
-
-            private void filter() {
-                String text = tfSearch.getText();
+            private void search() {
+                String text = txtSearch.getText();
                 if (text.trim().isEmpty()) {
                     sorter.setRowFilter(null);
                 } else {
-                    sorter.setRowFilter(
-                            RowFilter.regexFilter("(?i)" + text, 0)
-                    );
+                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
                 }
             }
         });
 
-        // ================= TOP =================
-        JLabel title = new JLabel("Daftar Produk");
-        title.setFont(UIStyle.TITLE_FONT);
-
-        JPanel top = new JPanel(new BorderLayout(10,10));
-        top.setBackground(UIStyle.BG_MAIN);
-        top.add(title, BorderLayout.WEST);
-        top.add(searchBar, BorderLayout.EAST);
+        JScrollPane scroll = new JScrollPane(table);
+        scroll.setBorder(BorderFactory.createLineBorder(new Color(220,220,220)));
 
         // ================= BUTTON =================
-        JButton tambah = UIStyle.primaryButton("Tambah Produk");
-        JButton hapus  = UIStyle.dangerButton("Hapus");
-        JButton back   = UIStyle.secondaryButton("Dashboard");
+        JButton btnBack = createButton("Dashboard", false);
+        JButton btnRefresh = createButton("Refresh", false);
+        JButton btnTambah = createButton("Tambah Produk", true);
 
-        tambah.addActionListener(e ->
-                card.show(container,"produk_form")
-        );
-
-        hapus.addActionListener(e -> {
-            int viewRow = table.getSelectedRow();
-            if (viewRow >= 0) {
-                int modelRow = table.convertRowIndexToModel(viewRow);
-                pm.hapus(modelRow);
-                refreshData();
-            } else {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Pilih produk terlebih dahulu",
-                        "Peringatan",
-                        JOptionPane.WARNING_MESSAGE
-                );
-            }
-        });
-
-        back.addActionListener(e ->
+        btnBack.addActionListener(e ->
                 card.show(container,"dashboard")
         );
 
+        btnRefresh.addActionListener(e -> refreshData());
+
+        btnTambah.addActionListener(e ->
+                card.show(container,"produk_form")
+        );
+
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT,10,0));
-        bottom.setBackground(UIStyle.BG_MAIN);
-        bottom.add(back);
-        bottom.add(hapus);
-        bottom.add(tambah);
+        bottom.setBackground(bgSoft);
+        bottom.add(btnBack);
+        bottom.add(btnRefresh);
+        bottom.add(btnTambah);
 
         // ================= ADD =================
-        add(top,BorderLayout.NORTH);
-        add(new JScrollPane(table),BorderLayout.CENTER);
-        add(bottom,BorderLayout.SOUTH);
+        add(top, BorderLayout.NORTH);
+        add(scroll, BorderLayout.CENTER);
+        add(bottom, BorderLayout.SOUTH);
+
+        refreshData();
     }
 
-    // ================= SEARCH BAR UI =================
-    private JPanel createSearchBar(JTextField tfSearch) {
-        JPanel wrapper = new JPanel(new BorderLayout(6,0));
-        wrapper.setBackground(Color.WHITE);
-        wrapper.setPreferredSize(new Dimension(280,36));
-        wrapper.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(UIStyle.PRIMARY,1,true),
-                BorderFactory.createEmptyBorder(6,10,6,10)
-        ));
+    // ================= BUTTON STYLE =================
+    private JButton createButton(String text, boolean primaryBtn) {
+        JButton btn = new JButton(text);
+        btn.setFont(bodyFont);
+        btn.setFocusPainted(false);
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        JLabel icon = new JLabel("🔍");
-        icon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 16));
+        if (primaryBtn) {
+            btn.setBackground(primary);
+            btn.setForeground(Color.WHITE);
+        } else {
+            btn.setBackground(Color.WHITE);
+            btn.setForeground(primary);
+            btn.setBorder(BorderFactory.createLineBorder(primary));
+        }
 
-        tfSearch.setBorder(null);
-        tfSearch.setBackground(Color.WHITE);
-
-        wrapper.add(icon, BorderLayout.WEST);
-        wrapper.add(tfSearch, BorderLayout.CENTER);
-
-        return wrapper;
+        btn.setBorder(BorderFactory.createEmptyBorder(8,16,8,16));
+        return btn;
     }
 
-    // ================= REFRESH =================
+    // ================= REFRESH DATA =================
     public void refreshData() {
         model.setRowCount(0);
         pm.getAll().forEach(p ->

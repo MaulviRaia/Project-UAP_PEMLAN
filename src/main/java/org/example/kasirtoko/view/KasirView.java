@@ -10,11 +10,15 @@ import org.example.kasirtoko.util.FormatterUtil;
 
 public class KasirView extends JPanel {
 
+    private final ProdukManager pm;                 // ✅ SIMPAN
     private final DefaultTableModel modelProduk;
     private final DefaultTableModel modelKeranjang;
+    private final JTable tblProduk;                 // ✅ SIMPAN
 
     public KasirView(CardLayout card, JPanel container,
                      ProdukManager pm, TransaksiManager tm) {
+
+        this.pm = pm;                               // ✅ SIMPAN
 
         setLayout(new BorderLayout(12,12));
         setBorder(BorderFactory.createEmptyBorder(15,15,15,15));
@@ -27,17 +31,10 @@ public class KasirView extends JPanel {
             public boolean isCellEditable(int r, int c) { return false; }
         };
 
-        JTable tblProduk = new JTable(modelProduk);
+        tblProduk = new JTable(modelProduk);
         tblProduk.setRowHeight(26);
 
-        for (Produk p : pm.getAll()) {
-            modelProduk.addRow(new Object[]{
-                    p.getNama(),
-                    FormatterUtil.rupiah(p.getHarga()),
-                    p.getStok(),
-                    p.getKategori()
-            });
-        }
+        refreshProduk(); // ✅ LOAD AWAL
 
         // ================= TABLE KERANJANG =================
         modelKeranjang = new DefaultTableModel(
@@ -62,8 +59,8 @@ public class KasirView extends JPanel {
 
         // ================= BUTTON =================
         JButton btnTambah = UIStyle.primaryButton("Tambah");
-        JButton btnBayar   = UIStyle.primaryButton("Bayar");
-        JButton btnBack    = UIStyle.secondaryButton("Dashboard");
+        JButton btnBayar  = UIStyle.primaryButton("Bayar");
+        JButton btnBack   = UIStyle.secondaryButton("Dashboard");
 
         btnBayar.setEnabled(false);
 
@@ -127,6 +124,8 @@ public class KasirView extends JPanel {
                 tfBayar.setText("");
                 btnBayar.setEnabled(false);
 
+                refreshProduk(); // ✅ STOK LANGSUNG UPDATE
+
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this,"Masukkan nominal yang valid");
             }
@@ -158,5 +157,18 @@ public class KasirView extends JPanel {
         add(kiri,BorderLayout.CENTER);
         add(kanan,BorderLayout.EAST);
         add(btnBack,BorderLayout.SOUTH);
+    }
+
+    // ================= REFRESH PRODUK (INI YANG DIBUTUHKAN) =================
+    public void refreshProduk() {
+        modelProduk.setRowCount(0);
+        for (Produk p : pm.getAll()) {
+            modelProduk.addRow(new Object[]{
+                    p.getNama(),
+                    FormatterUtil.rupiah(p.getHarga()),
+                    p.getStok(),
+                    p.getKategori()
+            });
+        }
     }
 }

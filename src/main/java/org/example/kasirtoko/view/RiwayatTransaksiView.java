@@ -11,8 +11,10 @@ import org.example.kasirtoko.util.*;
 
 public class RiwayatTransaksiView extends JPanel {
 
+    private final TransaksiManager tm;
     private final DefaultTableModel model;
     private final JTable table;
+    private final JLabel totalLabel;
 
     // ===== THEME =====
     private final Color bgWhite = Color.WHITE;
@@ -20,6 +22,7 @@ public class RiwayatTransaksiView extends JPanel {
     private final Color blueSoft = new Color(232, 242, 252);
 
     public RiwayatTransaksiView(CardLayout card, JPanel container, TransaksiManager tm) {
+        this.tm = tm;
 
         setLayout(new BorderLayout(10,10));
         setBackground(bgWhite);
@@ -30,11 +33,8 @@ public class RiwayatTransaksiView extends JPanel {
         title.setFont(new Font("Segoe UI", Font.BOLD, 20));
         title.setForeground(blue);
 
-        // ===== TOTAL PENDAPATAN =====
-        JLabel totalLabel = new JLabel(
-                "Total Pendapatan : " + FormatterUtil.rupiah(tm.getTotalPendapatan()),
-                SwingConstants.CENTER
-        );
+        // ===== TOTAL =====
+        totalLabel = new JLabel("", SwingConstants.CENTER);
         totalLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
 
         JPanel top = new JPanel(new GridLayout(2,1,5,5));
@@ -57,13 +57,13 @@ public class RiwayatTransaksiView extends JPanel {
         table.setSelectionBackground(blueSoft);
         table.setGridColor(new Color(220,220,220));
 
-        // Header Style
+        // Header
         JTableHeader header = table.getTableHeader();
         header.setBackground(blue);
         header.setForeground(Color.WHITE);
         header.setFont(new Font("Segoe UI", Font.BOLD, 14));
 
-        // Center align total
+        // Right align total
         DefaultTableCellRenderer right = new DefaultTableCellRenderer();
         right.setHorizontalAlignment(SwingConstants.RIGHT);
         table.getColumnModel().getColumn(1).setCellRenderer(right);
@@ -85,7 +85,7 @@ public class RiwayatTransaksiView extends JPanel {
             }
         });
 
-        refresh(tm);
+        refreshData();
 
         // ===== BUTTON =====
         JButton back = new JButton("Kembali ke Dashboard");
@@ -95,7 +95,9 @@ public class RiwayatTransaksiView extends JPanel {
         back.setFocusPainted(false);
         back.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        back.addActionListener(e -> card.show(container, "dashboard"));
+        back.addActionListener(e ->
+                card.show(container, "dashboard")
+        );
 
         JPanel bottom = new JPanel();
         bottom.setBackground(bgWhite);
@@ -106,7 +108,8 @@ public class RiwayatTransaksiView extends JPanel {
         add(bottom, BorderLayout.SOUTH);
     }
 
-    private void refresh(TransaksiManager tm) {
+    // ===== REFRESH DATA (DIPANGGIL DARI MAINAPP) =====
+    public void refreshData() {
         model.setRowCount(0);
 
         DateTimeFormatter fmt =
@@ -118,5 +121,10 @@ public class RiwayatTransaksiView extends JPanel {
                     FormatterUtil.rupiah(t.getTotal())
             });
         }
+
+        totalLabel.setText(
+                "Total Pendapatan : " +
+                        FormatterUtil.rupiah(tm.getTotalPendapatan())
+        );
     }
 }

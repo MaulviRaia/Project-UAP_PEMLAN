@@ -7,8 +7,18 @@ import org.example.kasirtoko.util.FormatterUtil;
 
 public class DashboardView extends JPanel {
 
+    private final ProdukManager pm;
+    private final TransaksiManager tm;
+
+    private JLabel lblTotalProduk;
+    private JLabel lblTotalPenjualan;
+    private ChartPanel chart;
+
     public DashboardView(CardLayout card, JPanel c,
                          ProdukManager pm, TransaksiManager tm) {
+
+        this.pm = pm;
+        this.tm = tm;
 
         setLayout(new BorderLayout(20,20));
         setBackground(UIStyle.BG_MAIN);
@@ -18,20 +28,23 @@ public class DashboardView extends JPanel {
         JPanel top = new JPanel(new GridLayout(1,2,20,20));
         top.setBackground(UIStyle.BG_MAIN);
 
+        lblTotalProduk = new JLabel();
+        lblTotalPenjualan = new JLabel();
+
         top.add(createInfoCard(
                 "Total Produk",
-                String.valueOf(pm.getAll().size()),
+                lblTotalProduk,
                 UIStyle.PRIMARY
         ));
 
         top.add(createInfoCard(
                 "Total Penjualan",
-                FormatterUtil.rupiah(tm.getTotalPendapatan()),
+                lblTotalPenjualan,
                 new Color(0, 123, 255)
         ));
 
         // ================= GRAFIK =================
-        JPanel chart = new ChartPanel(tm);
+        chart = new ChartPanel(tm);
         chart.setPreferredSize(new Dimension(400,260));
 
         // ================= MENU =================
@@ -53,14 +66,24 @@ public class DashboardView extends JPanel {
         menu.add(riwayat);
         menu.add(keluar);
 
-        // ================= ADD =================
         add(top,BorderLayout.NORTH);
         add(chart,BorderLayout.CENTER);
         add(menu,BorderLayout.SOUTH);
+
+        refresh(); // ⬅️ INIT FIRST LOAD
+    }
+
+    // ================= REFRESH (INI YANG HILANG) =================
+    public void refresh() {
+        lblTotalProduk.setText(String.valueOf(pm.getAll().size()));
+        lblTotalPenjualan.setText(
+                FormatterUtil.rupiah(tm.getTotalPendapatan())
+        );
+        chart.repaint();
     }
 
     // ================= INFO CARD =================
-    private JPanel createInfoCard(String title, String value, Color accent) {
+    private JPanel createInfoCard(String title, JLabel valueLabel, Color accent) {
         JPanel card = new JPanel(new BorderLayout(8,8));
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
@@ -72,12 +95,11 @@ public class DashboardView extends JPanel {
         lblTitle.setFont(UIStyle.BODY_FONT);
         lblTitle.setForeground(Color.GRAY);
 
-        JLabel lblValue = new JLabel(value);
-        lblValue.setFont(UIStyle.TITLE_FONT);
-        lblValue.setForeground(accent);
+        valueLabel.setFont(UIStyle.TITLE_FONT);
+        valueLabel.setForeground(accent);
 
         card.add(lblTitle,BorderLayout.NORTH);
-        card.add(lblValue,BorderLayout.CENTER);
+        card.add(valueLabel,BorderLayout.CENTER);
 
         return card;
     }
@@ -102,16 +124,16 @@ public class DashboardView extends JPanel {
                     RenderingHints.VALUE_ANTIALIAS_ON
             );
 
-            int width = getWidth();
-            int height = getHeight();
-
             int[] data = tm.getPendapatanPerHari();
             if (data.length == 0) {
                 g2.drawString("Belum ada data transaksi", 20, 30);
                 return;
             }
 
+            int width = getWidth();
+            int height = getHeight();
             int max = 1;
+
             for (int d : data) max = Math.max(max, d);
 
             int barWidth = (width - 40) / data.length;
